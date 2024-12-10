@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Email-Sending Program</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
+</head>
+<body>
+    <div class="container">
+        <h1>Automated Email-Sending Program</h1>
+
+        <!-- Add a status message area -->
+        <div id="status-message"></div>
+        
+        <form id="email-form" enctype="multipart/form-data">
+            <label for="file">Upload URL File (CSV or Excel):</label>
+            <input type="file" name="file" id="file" required><br><br>
+
+            <label for="sender_email">Sender Email:</label>
+            <input type="email" name="sender_email" id="sender_email" placeholder="your_email@gmail.com" required><br><br>
+
+            <label for="sender_password">Sender Email Password:</label>
+            <input type="password" name="sender_password" id="sender_password" required><br><br>
+
+            <label for="subject">Email Subject:</label>
+            <input type="text" name="subject" id="subject" placeholder="Subject" required><br><br>
+
+            <label for="body_template">Email Body Template:</label>
+            <textarea name="body_template" id="body_template" rows="6" placeholder="Hello, {email}!" required></textarea><br><br>
+
+            <button type="submit">Send Emails</button>
+        </form>
+    </div>
+
+    <script>
+        // Handle the form submission with AJAX
+        $(document).ready(function() {
+            $('#email-form').submit(function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Form data preparation
+                var formData = new FormData(this);
+
+                // Display loading message
+                $('#status-message').html('Processing, please wait...');
+
+                // AJAX request to Flask backend
+                $.ajax({
+                    url: '/',  // Endpoint for Flask to handle the form
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        // Success message
+                        $('#status-message').html('<p style="color: green;">Emails have been sent successfully!</p>');
+                    },
+                    error: function(error) {
+                        // Error handling
+                        $('#status-message').html('<p style="color: red;">An error occurred while sending the emails.</p>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
